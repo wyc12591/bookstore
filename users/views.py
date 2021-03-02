@@ -1,5 +1,6 @@
 import re
 
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 # Create your views here.
 from django.urls import reverse
@@ -37,6 +38,7 @@ def register_handle(request):
 
     return redirect(reverse('books:index'))
 
+
 def login(request):
     """显示登陆页面"""
     if request.COOKIES.get("username"):
@@ -51,3 +53,40 @@ def login(request):
     }
 
     return render(request, 'users/login.html', context)
+
+
+def login_check(request):
+    """进行用户登录校验"""
+    # 1.获取数据
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    remember = request.POST.get('remember')
+
+    # 2.数据校验
+    if not all([username, password, remember]):
+        # 有数据为空
+        return JsonResponse({'res': 2})
+
+    # 3.进行处理：根据用户名和密码查找账户信息
+    passport = Passport.objects.get_one_passport(username=username, password=password)
+
+    if passport:
+        next_url = reverse('books:index')
+        jres = JsonResponse({'res': 1, 'next_url': next_url})
+
+        # 判断是否需要记住用户名
+        if remember == 'true':
+            # 记住用户名
+            jres.set_cookie('username', username, max_age=7 * 24 * 3600)
+        else:
+            # 不要记住用户名
+            jres.delete_cookie('username')
+
+        # 记住用户的登录状态
+        request.session['islogin'] = True
+        request.session['username'] = username
+        request.session['passport_id'] = passport.id
+        return jres
+    else:
+        # 用户名或密码错误
+        return JsonResponse({'res': 0})
