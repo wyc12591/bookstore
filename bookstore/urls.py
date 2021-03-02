@@ -20,4 +20,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^user/', include(('users.urls', 'users'), namespace='user')),
+    url(r'^tinymce/', include('tinymce.urls')),
+    url(r'^', include(('books.urls', 'books'), namespace='books')), # 商品模块
 ]
