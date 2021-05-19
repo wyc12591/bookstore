@@ -10,4 +10,5 @@ from users import views
 
 urlpatterns = [
     path('register/', views.register, name='register'),  # 用户注册
+    path('register_handle/', views.register_handle, name='register_handle'),  # 用户注册处理
 ]
