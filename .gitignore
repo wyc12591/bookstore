@@ -2,3 +2,13 @@
 venv/
 
 .idea/
+
+users/__pycache__/
+
+users/migrations/
+
+utils/__pycache__/
+
+db/__pycache__/
+
+bookstore/__pycache__/
